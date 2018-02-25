@@ -24,7 +24,7 @@ public class CubeGen : MonoBehaviour {
 
 			int randomX = Random.Range(-10, 10);
 			int randomY = Random.Range(0, 5);
-			int randomZ = 5;
+			int randomZ = 30;
 
 			Vector3 newPos = new Vector3(randomX, randomY, randomZ);
 

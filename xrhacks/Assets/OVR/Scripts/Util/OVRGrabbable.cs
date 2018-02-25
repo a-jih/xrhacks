@@ -37,10 +37,17 @@ public class OVRGrabbable : MonoBehaviour
     protected Transform m_snapOffset;
     [SerializeField]
     protected Collider[] m_grabPoints = null;
+    [SerializeField]
+    protected bool m_isGun = false;
 
     protected bool m_grabbedKinematic = false;
     protected Collider m_grabbedCollider = null;
     protected OVRGrabber m_grabbedBy = null;
+
+    public bool isGun
+    {
+        get { return m_isGun; }
+    }
 
 	/// <summary>
 	/// If true, the object can currently be grabbed.

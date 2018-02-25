@@ -58,6 +58,8 @@ public class OVRGrabber : MonoBehaviour
     protected bool m_grabVolumeEnabled = true;
     protected Vector3 m_lastPos;
     protected Quaternion m_lastRot;
+    protected Vector3 m_lastLocalPos;
+    protected Quaternion m_lastLocalRot;
     protected Quaternion m_anchorOffsetRotation;
     protected Vector3 m_anchorOffsetPosition;
     protected float m_prevFlex;
@@ -68,6 +70,7 @@ public class OVRGrabber : MonoBehaviour
 	protected bool operatingWithoutOVRCameraRig = true;
 
     private Vector3 initial_Pos;
+    private Vector3 initial_LocalPos;
 
     /// <summary>
     /// The currently grabbed object.
@@ -111,6 +114,8 @@ public class OVRGrabber : MonoBehaviour
     {
         m_lastPos = transform.position;
         m_lastRot = transform.rotation;
+        m_lastLocalPos = transform.localPosition;
+        m_lastLocalRot = transform.localRotation;
         
         if(m_parentTransform == null)
         {
@@ -152,6 +157,8 @@ public class OVRGrabber : MonoBehaviour
         }
         m_lastPos = transform.position;
         m_lastRot = transform.rotation;
+        m_lastLocalPos = transform.localPosition;
+        m_lastLocalRot = transform.localRotation;
 
 		float prevFlex = m_prevFlex;
 		// Update values from inputs
@@ -258,8 +265,11 @@ public class OVRGrabber : MonoBehaviour
             m_grabbedObj = closestGrabbable;
             m_grabbedObj.GrabBegin(this, closestGrabbableCollider);
             initial_Pos = m_lastPos;
+            initial_LocalPos = m_lastLocalPos;
             m_lastPos = transform.position;
             m_lastRot = transform.rotation;
+            m_lastLocalPos = transform.localPosition;
+            m_lastLocalRot = transform.localRotation;
 
             // Set up offsets for grabbed object desired position relative to hand.
             if(m_grabbedObj.snapPosition)
@@ -275,7 +285,8 @@ public class OVRGrabber : MonoBehaviour
             else
             {
                 Vector3 relPos = m_grabbedObj.transform.position - transform.position;
-                relPos = Quaternion.Inverse(transform.rotation) * relPos;
+                //relPos = Quaternion.Inverse(transform.rotation) * relPos;
+                relPos = Quaternion.Inverse(transform.localRotation) * relPos;
                 m_grabbedObjectPosOff = relPos;
             }
 
@@ -289,7 +300,8 @@ public class OVRGrabber : MonoBehaviour
             }
             else
             {
-                Quaternion relOri = Quaternion.Inverse(transform.rotation) * m_grabbedObj.transform.rotation;
+                //Quaternion relOri = Quaternion.Inverse(transform.rotation) * m_grabbedObj.transform.rotation;
+                Quaternion relOri = Quaternion.Inverse(transform.localRotation) * m_grabbedObj.transform.localRotation;
                 m_grabbedObjectRotOff = relOri;
             }
 
@@ -310,23 +322,39 @@ public class OVRGrabber : MonoBehaviour
         {
             return;
         }
-
+        
         Rigidbody grabbedRigidbody = m_grabbedObj.grabbedRigidbody;
+        Transform grabbedTransformBody = m_grabbedObj.grabbedTransform;
         Vector3 grabbablePosition = pos + rot * m_grabbedObjectPosOff;
-        //Quaternion grabbableRotation = rot * m_grabbedObjectRotOff;
 
-        Quaternion grabbableRotation = Quaternion.Euler(((pos.y - initial_Pos.y)*120), -((pos.z - initial_Pos.z)*120), 0);
-        //Quaternion grabbableRotation = Quaternion.Euler(0, -(pos.z * 20), 0) * 
+        //Vector3 localPos = grabbedTransformBody.InverseTransformVector(pos);
+        //Vector3 localInitial = grabbedTransformBody.InverseTransformVector(initial_Pos);
+        Vector3 localPos = transform.InverseTransformVector(pos);
+        Vector3 localInitial = transform.InverseTransformVector(initial_Pos);
+        //Quaternion grabbableRotation = rot * m_grabbedObjectRotOff;
+        
+       // Quaternion grabbableRotation = Quaternion.Euler(((pos.z - initial_Pos.z)*150), 0, -((pos.x - initial_Pos.x)*150));
+        Quaternion grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).z*150), 0, -((m_lastLocalPos-initial_LocalPos).x*150));
+
+        if (m_grabbedObj.isGun)
+        {
+            grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).y*100), -((m_lastLocalPos - initial_LocalPos).z*100), 0);
+        }
+        //uaternion grabbableRotation = Quaternion.Euler(0, -(pos.z * 20), 0) * 
 
         if (forceTeleport)
         {
           //  grabbedRigidbody.transform.position = grabbablePosition;
-            grabbedRigidbody.transform.rotation = grabbableRotation;
+            grabbedRigidbody.transform.localRotation = grabbableRotation;
         }
         else
         {
          //   grabbedRigidbody.MovePosition(grabbablePosition);
-            grabbedRigidbody.MoveRotation(grabbableRotation);
+            //grabbedRigidbody.MoveRotation(grabbableRotation);
+            //m_grabbedObj.grabbedTransform.localRotation = grabbableRotation;
+            grabbedRigidbody.transform.localRotation = grabbableRotation;
+		    //Vector3 vel_rotation = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
+            //grabbedRigidbody.transform.Rotate(new Vector3(vel_rotation.z/0.01f, 0, vel_rotation.x/0.01f));
         }
     }
 
@@ -342,6 +370,10 @@ public class OVRGrabber : MonoBehaviour
 			Vector3 linearVelocity = trackingSpace.orientation * OVRInput.GetLocalControllerVelocity(m_controller);
 			Vector3 angularVelocity = trackingSpace.orientation * OVRInput.GetLocalControllerAngularVelocity(m_controller);
 
+            //m_grabbedObj.grabbedRigidbody.MoveRotation(Quaternion.Euler(0,0,0));
+            if (!m_grabbedObj.isGun) {
+                m_grabbedObj.grabbedTransform.localRotation = Quaternion.Euler(0,0,0);
+            }
             GrabbableRelease(linearVelocity, angularVelocity);
         }
 

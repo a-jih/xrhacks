@@ -28,5 +28,6 @@ public class MovingBox : MonoBehaviour {
 			float step = speed * Time.deltaTime;
 			transform.position += direction * step;
 		}
+		speed = GameObject.Find("Master").GetComponent<GameCubeMain>().speed;
 	}
 }

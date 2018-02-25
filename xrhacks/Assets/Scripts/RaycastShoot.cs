@@ -50,6 +50,7 @@ public class RaycastShoot : MonoBehaviour {
 
 				if (cube = hit.collider.gameObject)
 				{
+					GameObject.Find("Master").GetComponent<GameCubeMain>().cubesDestroyed += 1;
 					Destroy(hit.collider.gameObject);
 				}
 			}

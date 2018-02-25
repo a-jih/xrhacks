@@ -315,7 +315,7 @@ public class OVRGrabber : MonoBehaviour
         Vector3 grabbablePosition = pos + rot * m_grabbedObjectPosOff;
         //Quaternion grabbableRotation = rot * m_grabbedObjectRotOff;
 
-        Quaternion grabbableRotation = Quaternion.Euler(((pos.y - initial_Pos.y)*100), -((pos.z - initial_Pos.z)*100), 0);
+        Quaternion grabbableRotation = Quaternion.Euler(((pos.y - initial_Pos.y)*120), -((pos.z - initial_Pos.z)*120), 0);
         //Quaternion grabbableRotation = Quaternion.Euler(0, -(pos.z * 20), 0) * 
 
         if (forceTeleport)

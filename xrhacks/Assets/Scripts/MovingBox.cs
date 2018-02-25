@@ -17,14 +17,18 @@ public class MovingBox : MonoBehaviour {
 	/// </summary>
 	void Start()
 	{
-		direction = Vector3.Normalize(target.position - transform.position);		
+		int randomX = Random.Range(-10, -1);
+		int randomY = Random.Range(-10,-1);
+		int randomZ = Random.Range(-10, -1);
+		direction = Vector3.Normalize(new Vector3(Mathf.Sign(transform.position.x)*randomX, Mathf.Sign(transform.position.y)*randomY, Mathf.Sign(transform.position.z)*randomZ));
+	//	direction = Vector3.Normalize(target.position - transform.position);		
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (!grabbed)
 		{
-			direction = Vector3.Normalize(target.position - transform.position);		
+		//	direction = Vector3.Normalize(target.position - transform.position);		
 			float step = speed * Time.deltaTime;
 			transform.position += direction * step;
 		}

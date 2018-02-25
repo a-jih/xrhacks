@@ -8,6 +8,7 @@ public class CarpetControls : MonoBehaviour {
 	public float rotSpeed = 0.0f;
 
 	public GameObject joystick;
+	public GameObject throttle;
 	public AudioSource engineSound;
 
 	// Use this for initialization
@@ -22,7 +23,7 @@ public class CarpetControls : MonoBehaviour {
 	}	
 	void checkInput() {
 		
-		if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.2) {
+		/*if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.2) {
 			
 			//float throttle = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger);
 			Vector3 vel = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
@@ -38,7 +39,7 @@ public class CarpetControls : MonoBehaviour {
 			engineSound.Play();
 			engineSound.volume = speed/2.0f;
 			//moveShip(new Vector3(0.0f, 0.0f, 1.0f), speed); 
-		}
+		} */
 
 		//if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger) > 0.2) {
 		//	motionRotateShip(OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch), rotSpeed);
@@ -46,6 +47,7 @@ public class CarpetControls : MonoBehaviour {
 		rotateShip(0.001f);
 		//Vector2 stickRotation = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
 		//stickRotateShip(stickRotation, rotSpeed);
+		setThrottle(0.001f);
 		moveShip(transform.forward, speed); 
 	}
 
@@ -54,9 +56,7 @@ public class CarpetControls : MonoBehaviour {
 	}
 
 	void rotateShip(float magnitude) {
-		//float rotX = joystick.GetComponent<Transform>().localEulerAngles.x*magnitude;
-		//float rotY = joystick.GetComponent<Transform>().localEulerAngles.y*magnitude;
-		//float rotZ = joystick.GetComponent<Transform>().localEulerAngles.z*magnitude;
+		
 		float rotX = joystick.GetComponent<Transform>().localEulerAngles.x*Time.deltaTime;
 		float rotY = joystick.GetComponent<Transform>().localEulerAngles.y*Time.deltaTime;
 		float rotZ = joystick.GetComponent<Transform>().localEulerAngles.z*Time.deltaTime;
@@ -90,6 +90,21 @@ public class CarpetControls : MonoBehaviour {
 			Debug.Log("FUASLDJKF" + rotZ);
 		}
 		transform.Rotate(new Vector3(rotX, 0, rotZ));
+	}
+
+	void setThrottle(float magnitude) {
+		float rotX = throttle.GetComponent<Transform>().localEulerAngles.x*Time.deltaTime;
+		if (throttle.GetComponent<Transform>().localRotation.x < 0.0f) {
+			rotX = rotX * -1.0f;
+		}
+		speed = rotX;
+		if (speed > 1.0f) {
+			speed = 1.0f;
+		} else if (rotX <= 0) {
+			speed = 0;
+		}
+		engineSound.Play();
+		engineSound.volume = speed;
 	}
 
 	void motionRotateShip(Quaternion rotation, float magnitude) {

@@ -322,39 +322,38 @@ public class OVRGrabber : MonoBehaviour
         {
             return;
         }
-        
+        Quaternion grabbableRotation;
         Rigidbody grabbedRigidbody = m_grabbedObj.grabbedRigidbody;
         Transform grabbedTransformBody = m_grabbedObj.grabbedTransform;
         Vector3 grabbablePosition = pos + rot * m_grabbedObjectPosOff;
 
-        //Vector3 localPos = grabbedTransformBody.InverseTransformVector(pos);
-        //Vector3 localInitial = grabbedTransformBody.InverseTransformVector(initial_Pos);
-        Vector3 localPos = transform.InverseTransformVector(pos);
-        Vector3 localInitial = transform.InverseTransformVector(initial_Pos);
-        //Quaternion grabbableRotation = rot * m_grabbedObjectRotOff;
-        
-       // Quaternion grabbableRotation = Quaternion.Euler(((pos.z - initial_Pos.z)*150), 0, -((pos.x - initial_Pos.x)*150));
-        Quaternion grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).z*150), 0, -((m_lastLocalPos-initial_LocalPos).x*150));
 
         if (m_grabbedObj.isGun)
         {
+            
             grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).y*100), -((m_lastLocalPos - initial_LocalPos).z*100), 0);
+            grabbedRigidbody.transform.localRotation = grabbableRotation;
+
         }
-        //uaternion grabbableRotation = Quaternion.Euler(0, -(pos.z * 20), 0) * 
 
         if (forceTeleport)
         {
-          //  grabbedRigidbody.transform.position = grabbablePosition;
+            grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).z*150), 0, -((m_lastLocalPos-initial_LocalPos).x*150));
             grabbedRigidbody.transform.localRotation = grabbableRotation;
         }
-        else
+        if (m_grabbedObj.isJoystick)
         {
-         //   grabbedRigidbody.MovePosition(grabbablePosition);
-            //grabbedRigidbody.MoveRotation(grabbableRotation);
-            //m_grabbedObj.grabbedTransform.localRotation = grabbableRotation;
+            grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).z*50), 0, -((m_lastLocalPos-initial_LocalPos).x*50));
             grabbedRigidbody.transform.localRotation = grabbableRotation;
-		    //Vector3 vel_rotation = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
-            //grabbedRigidbody.transform.Rotate(new Vector3(vel_rotation.z/0.01f, 0, vel_rotation.x/0.01f));
+
+        }
+         if (m_grabbedObj.isThrottle)
+        {
+            
+            grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).z*100), 0, 0);
+            if (grabbableRotation.x > 0.0f && grabbableRotation.eulerAngles.x <= 20.0f) {
+                grabbedRigidbody.transform.localRotation = grabbableRotation;
+            }
         }
     }
 
@@ -370,8 +369,7 @@ public class OVRGrabber : MonoBehaviour
 			Vector3 linearVelocity = trackingSpace.orientation * OVRInput.GetLocalControllerVelocity(m_controller);
 			Vector3 angularVelocity = trackingSpace.orientation * OVRInput.GetLocalControllerAngularVelocity(m_controller);
 
-            //m_grabbedObj.grabbedRigidbody.MoveRotation(Quaternion.Euler(0,0,0));
-            if (!m_grabbedObj.isGun) {
+            if (m_grabbedObj.isJoystick) {
                 m_grabbedObj.grabbedTransform.localRotation = Quaternion.Euler(0,0,0);
             }
             GrabbableRelease(linearVelocity, angularVelocity);

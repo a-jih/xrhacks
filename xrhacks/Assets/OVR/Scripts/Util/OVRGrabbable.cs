@@ -39,6 +39,10 @@ public class OVRGrabbable : MonoBehaviour
     protected Collider[] m_grabPoints = null;
     [SerializeField]
     protected bool m_isGun = false;
+    [SerializeField]
+    protected bool m_isThrottle = false;
+    [SerializeField]
+    protected bool m_isJoystick = false;
 
     protected bool m_grabbedKinematic = false;
     protected Collider m_grabbedCollider = null;
@@ -48,7 +52,14 @@ public class OVRGrabbable : MonoBehaviour
     {
         get { return m_isGun; }
     }
-
+    public bool isThrottle
+    {
+        get { return m_isThrottle; }
+    }
+    public bool isJoystick
+    {
+        get { return m_isJoystick; }
+    }
 	/// <summary>
 	/// If true, the object can currently be grabbed.
 	/// </summary>

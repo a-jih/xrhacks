@@ -5,7 +5,7 @@ using UnityEngine;
 public class RaycastShoot : MonoBehaviour {
 
 	public float fireRate = .25f;
-	public float weaponRange = 100f;
+	public float weaponRange = 150f;
 
 	public Transform gunEnd;
 
@@ -31,7 +31,7 @@ public class RaycastShoot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.2 && Time.time > nextFire)
+		if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.2 && Time.time > nextFire)
 		{
 			nextFire = Time.time + fireRate;
 			StartCoroutine(ShotEffect());
@@ -48,7 +48,7 @@ public class RaycastShoot : MonoBehaviour {
 
 				GameObject cube = GameObject.Find("Cube(Clone)");
 
-				if (cube = hit.collider.gameObject)
+				if (cube == hit.collider.gameObject)
 				{
 					GameObject.Find("Master").GetComponent<GameCubeMain>().cubesDestroyed += 1;
 					Destroy(hit.collider.gameObject);

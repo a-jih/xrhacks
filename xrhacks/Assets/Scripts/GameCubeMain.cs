@@ -23,7 +23,7 @@ public class GameCubeMain : MonoBehaviour {
 
 	IEnumerator GameStart()
 	{
-		gameOverText.text = "Don't let them near your magic carpet!\nRight hand to man the guns, index finger to shoot.";
+		gameOverText.text = "Don't let them near your magic carpet!\nLeft hand to man the guns, and left index finger to shoot.\nMiddle forward to move forward, middle back to move back.\nRight to rotate.";
 		GameObject.Find("CubeGenerator").GetComponent<CubeGen>().enabled = false; 
 		yield return new WaitForSeconds(10);
 		GameObject.Find("CubeGenerator").GetComponent<CubeGen>().enabled = true; 

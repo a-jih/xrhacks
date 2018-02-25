@@ -20,8 +20,8 @@ public class MovingBox : MonoBehaviour {
 		int randomX = Random.Range(-10, -1);
 		int randomY = Random.Range(-10,-1);
 		int randomZ = Random.Range(-10, -1);
-		direction = Vector3.Normalize(new Vector3(Mathf.Sign(transform.position.x)*randomX, Mathf.Sign(transform.position.y)*randomY, Mathf.Sign(transform.position.z)*randomZ));
-	//	direction = Vector3.Normalize(target.position - transform.position);		
+		//direction = Vector3.Normalize(new Vector3(Mathf.Sign(transform.position.x)*randomX, Mathf.Sign(transform.position.y)*randomY, Mathf.Sign(transform.position.z)*randomZ));
+		direction = Vector3.Normalize(target.position - transform.position);		
 	}
 
 	// Update is called once per frame

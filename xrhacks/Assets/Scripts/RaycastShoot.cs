@@ -5,7 +5,7 @@ using UnityEngine;
 public class RaycastShoot : MonoBehaviour {
 
 	public float fireRate = .25f;
-	public float weaponRange = 150f;
+	public float weaponRange = 100f;
 
 	public Transform gunEnd;
 
@@ -46,12 +46,16 @@ public class RaycastShoot : MonoBehaviour {
 			{
 				laserLine.SetPosition(1, hit.point);
 
-				GameObject cube = GameObject.Find("Cube(Clone)");
+				GameObject[] cubes = GameObject.FindGameObjectsWithTag("Destroyable");
 
-				if (cube == hit.collider.gameObject)
+				for (int i = 0; i < cubes.Length; ++i)
 				{
-					GameObject.Find("Master").GetComponent<GameCubeMain>().cubesDestroyed += 1;
-					Destroy(hit.collider.gameObject);
+					if (cubes[i] == hit.collider.gameObject)
+					{
+						Debug.Log("cube is hit.collider ob");
+						GameObject.Find("Master").GetComponent<GameCubeMain>().cubesDestroyed += 1;
+						Destroy(hit.collider.gameObject);
+					}
 				}
 			}
 			else

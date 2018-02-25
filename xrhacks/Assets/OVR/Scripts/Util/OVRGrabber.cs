@@ -31,6 +31,7 @@ public class OVRGrabber : MonoBehaviour
     // Grip trigger thresholds for picking up objects, with some hysteresis.
     public float grabBegin = 0.55f;
     public float grabEnd = 0.35f;
+    public bool holdingGun = false;
 
     // Demonstrates parenting the held object to the hand's transform when grabbed.
     // When false, the grabbed object is moved every FixedUpdate using MovePosition. 
@@ -305,6 +306,14 @@ public class OVRGrabber : MonoBehaviour
                 m_grabbedObjectRotOff = relOri;
             }
 
+            if (m_grabbedObj.isGun) {
+                if (!holdingGun) {
+                    holdingGun = true;
+                } else {
+                    holdingGun = false;
+                }
+            }
+
             // Note: force teleport on grab, to avoid high-speed travel to dest which hits a lot of other objects at high
             // speed and sends them flying. The grabbed object may still teleport inside of other objects, but fixing that
             // is beyond the scope of this demo.
@@ -330,9 +339,15 @@ public class OVRGrabber : MonoBehaviour
 
         if (m_grabbedObj.isGun)
         {
-            
-            grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).y*100), -((m_lastLocalPos - initial_LocalPos).z*100), 0);
-            grabbedRigidbody.transform.localRotation = grabbableRotation;
+            if (holdingGun) {
+                grabbableRotation = Quaternion.Euler(OVRInput.GetLocalControllerPosition(OVRInput.Controller.Touch));
+                grabbedRigidbody.transform.localRotation = grabbableRotation;
+
+            }
+            else {
+                grabbableRotation = Quaternion.Euler(((m_lastLocalPos - initial_LocalPos).y*120), -((m_lastLocalPos - initial_LocalPos).z*120), 0);
+                grabbedRigidbody.transform.localRotation = grabbableRotation;
+            }
 
         }
 
